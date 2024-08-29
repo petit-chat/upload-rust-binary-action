@@ -5,24 +5,25 @@
 
 GitHub Action for building and uploading Rust binary to GitHub Releases.
 
-- [Usage](#usage)
-  - [Inputs](#inputs)
-  - [Outputs](#outputs)
-  - [Example workflow: Basic usage](#example-workflow-basic-usage)
-  - [Example workflow: Basic usage (multiple platforms)](#example-workflow-basic-usage-multiple-platforms)
-  - [Example workflow: Customize archive name](#example-workflow-customize-archive-name)
-  - [Example workflow: Build with different features on different platforms](#example-workflow-build-with-different-features-on-different-platforms)
-  - [Example workflow: Cross-compilation](#example-workflow-cross-compilation)
-    - [cross](#cross)
-    - [setup-cross-toolchain-action](#setup-cross-toolchain-action)
-    - [cargo-zigbuild](#cargo-zigbuild)
-  - [Example workflow: Include additional files](#example-workflow-include-additional-files)
-  - [Other examples](#other-examples)
-  - [Optimize Rust binary](#optimize-rust-binary)
-- [Supported events](#supported-events)
-- [Compatibility](#compatibility)
-- [Related Projects](#related-projects)
-- [License](#license)
+- [upload-rust-binary-action](#upload-rust-binary-action)
+  - [Usage](#usage)
+    - [Inputs](#inputs)
+    - [Outputs](#outputs)
+    - [Example workflow: Basic usage](#example-workflow-basic-usage)
+    - [Example workflow: Basic usage (multiple platforms)](#example-workflow-basic-usage-multiple-platforms)
+    - [Example workflow: Customize archive name](#example-workflow-customize-archive-name)
+    - [Example workflow: Build with different features on different platforms](#example-workflow-build-with-different-features-on-different-platforms)
+    - [Example workflow: Cross-compilation](#example-workflow-cross-compilation)
+      - [cross](#cross)
+      - [setup-cross-toolchain-action](#setup-cross-toolchain-action)
+      - [cargo-zigbuild](#cargo-zigbuild)
+    - [Example workflow: Include additional files](#example-workflow-include-additional-files)
+    - [Other examples](#other-examples)
+    - [Optimize Rust binary](#optimize-rust-binary)
+  - [Supported events](#supported-events)
+  - [Compatibility](#compatibility)
+  - [Related Projects](#related-projects)
+  - [License](#license)
 
 ## Usage
 
@@ -37,6 +38,7 @@ Currently, this action is basically intended to be used in combination with an a
 | ------------------- |:------------:| -------------------------------------------------------------------------------------------- | ------- | -------------- |
 | bin                 | **true**     | Comma-separated list of binary names (non-extension portion of filename) to build and upload | String  |                |
 | token               | **true** \[1]| GitHub token for creating GitHub Releases (see [action.yml](action.yml) for more)            | String  |                |
+| run                 | false     | Comma-separated list of binary names (non-extension portion of filename) to run after build | String  |                |
 | archive             | false        | Archive name (non-extension portion of filename) to be uploaded                              | String  | `$bin-$target` |
 | target              | false \[2]   | Target triple, default is host triple                                                        | String  | (host triple)  |
 | features            | false        | Comma-separated list of cargo build features to enable                                       | String  |                |

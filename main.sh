@@ -96,6 +96,20 @@ case "${no_default_features}" in
     *) bail "'no-default-features' input option must be 'true' or 'false': '${no_default_features}'" ;;
 esac
 
+run_bin="${INPUT_RUN:?}"
+run_bins=()
+if [[ -n "${run_bin}" ]]; then
+    # We can expand a glob by expanding a variable without quote, but that way
+    # has a security issue of shell injection.
+    if [[ "${run_bin}" == *"?"* ]] || [[ "${run_bin}" == *"*"* ]] || [[ "${run_bin}" == *"["* ]]; then
+        # This check is not for security but for diagnostic purposes.
+        # We quote the filename, so without this uses get an error like
+        # "cp: cannot stat 'app-*': No such file or directory".
+        bail "glob pattern in 'bin' input option is not supported yet"
+    fi
+    while read -rd,; do run_bins+=("${REPLY}"); done <<<"${run_bin},"
+fi
+
 bin_name="${INPUT_BIN:?}"
 bin_names=()
 if [[ -n "${bin_name}" ]]; then
@@ -255,6 +269,8 @@ case "${input_profile}" in
     *) profile_directory=${input_profile} ;;
 esac
 
+run_options=$build_options
+
 bins=()
 for bin_name in "${bin_names[@]}"; do
     bins+=("${bin_name}${exe:-}")
@@ -310,12 +326,20 @@ fi
 
 build() {
     case "${build_tool}" in
-        cargo) x cargo build "${build_options[@]}" "$@" ;;
+        cargo)
+            x cargo build "${build_options[@]}" "$@"
+            for run_bin in "${run_bins[@]}"; do
+                x cargo run "${run_options[@]}" --bin "${run_bin}" "$@"
+            done
+            ;;
         cross)
             if ! type -P cross &>/dev/null; then
                 x cargo install cross --locked
             fi
             x cross build "${build_options[@]}" "$@"
+            for run_bin in "${run_bins[@]}"; do
+                x cross run "${run_options[@]}" --bin "${run_bin}" "$@"
+            done
             ;;
         cargo-zigbuild)
             if ! type -P cargo-zigbuild &>/dev/null; then
@@ -327,6 +351,9 @@ build() {
                 *) x rustup target add "${target}" ;;
             esac
             x cargo zigbuild "${build_options[@]}" "$@"
+            for run_bin in "${run_bins[@]}"; do
+                x cargo run "${run_options[@]}" --bin "${run_bin}" "$@"
+            done
             ;;
         *) bail "unrecognized build tool '${build_tool}'" ;;
     esac

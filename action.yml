@@ -7,6 +7,11 @@ inputs:
       Comma-separated list of binary names (non-extension portion of filename) to build and upload.
       Note that glob pattern is not supported yet.
     required: true
+  run:
+    description: >
+      Comma-separated list of binary names (non-extension portion of filename) to run after build.
+      Note that glob pattern is not supported yet.
+    required: false
   archive:
     description: Archive name (non-extension portion of filename) to be uploaded (variables `$bin`, `$target`, `$tag`, and any string)
     required: false
@@ -143,6 +148,7 @@ runs:
       shell: bash
       env:
         INPUT_BIN: ${{ inputs.bin }}
+        INPUT_RUN: ${{ inputs.run }}
         INPUT_ARCHIVE: ${{ inputs.archive }}
         INPUT_TARGET: ${{ inputs.target }}
         INPUT_FEATURES: ${{ inputs.features }}

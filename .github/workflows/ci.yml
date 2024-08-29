@@ -79,6 +79,7 @@ jobs:
         with:
           dry-run: true
           bin: test-crate
+          run: test-crate
           target: ${{ matrix.target }}
           build-tool: ${{ matrix.build_tool }}
           checksum: sha256,sha512,sha1,md5
